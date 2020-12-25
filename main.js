@@ -14,23 +14,6 @@ const { filesToDelete, filesToEdit } = require('./fileModifications');
 
 function initialBuild() {
     console.log(`Building ${appName}...\nThis may take a few minutes.`);
-    // return new Promise((resolve, reject) => {
-    //     try {
-    //         if (!fs.existsSync(`./${appName}`)) {
-    //             execSync(buildApp, (err, stdout, stderr) => {
-    //                 if (err) {
-    //                     console.log(err)
-    //                 } else {
-    //                     resolve({ stdout, stderr });
-    //                 }
-    //             })
-    //         } else {
-    //             console.log(`${appName} directory already exists in this location..`);
-    //         }
-    //     } catch (err) {
-    //         reject(err);
-    //     }
-    // })
     if (!fs.existsSync(`./${appName}`)) {
         execSync(buildApp, (err, stdout, stderr) => {
             if (err) {
