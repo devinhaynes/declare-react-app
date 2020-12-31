@@ -19,6 +19,22 @@ const filesToEdit = [
             "reportWebVitals();"
         ],
         removeComments: true
+    },
+    {
+        name: 'public/index.html',
+        singleLineDeletions: [
+            '<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />',
+            '<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />',
+            '<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />'
+        ],
+        removeComments: true,
+        removeMultiLineComments: true,
+        lineEdits: [
+            {
+                original: '<title>React App</title>',
+                replacement: ''
+            }
+        ]
     }
 ];
 

@@ -5,13 +5,6 @@ const buildApp = `npx create-react-app ${appName}`;
 const { execSync } = require('child_process');
 const { filesToDelete, filesToEdit } = require('./fileModifications');
 
-// Files to modify :
-// index.html
-// - Remove commented lines
-// - Change title
-// - Remove manifest link
-// - Remove logo192 link
-
 function initialBuild() {
     console.log(`Building ${appName}...\nThis may take a few minutes.`);
     if (!fs.existsSync(`./${appName}`)) {
@@ -49,6 +42,9 @@ function editFiles() {
                     console.log(`Unable to edit ${file}`);
                 }
                 let dataArray = data.split('\n');
+
+                // TODO - Come up with a more efficient way of filtering all of these data edits
+
                 // Single Line edits
                 let filteredData = dataArray.filter(line => !file.singleLineDeletions.includes(line.trim()));
                 // Multi Line edits
@@ -65,6 +61,35 @@ function editFiles() {
                 if (file.removeComments) {
                     filteredData = filteredData.filter(line => !line.match(/^\/\//g));
                 }
+
+                // Edit existing lines
+                if (file.lineEdits) {
+                    file.lineEdits.forEach(edit => {
+                        let { original, replacement } = edit;
+                        if (original == '<title>React App</title>') {
+                            replacement = `<title>${appName}</title>`;
+                        }
+                        filteredData = filteredData.map(line => line.trim() == original ? replacement : line);
+                    })
+                }
+
+                if (file.removeMultiLineComments) {
+                    let startComments = new RegExp('<!--', 'g');
+                    let endComments = new RegExp('-->', 'g');
+                    let started = false;
+                    filteredData = filteredData.filter(data => {
+                        if (data.match(startComments)) {
+                            started = true;
+                        }
+                        if (!started) {
+                            return data
+                        }
+                        if (data.match(endComments)) {
+                            started = false;
+                        }
+                    })
+                }
+
                 let updatedData = filteredData.join('\n');
                 fs.writeFile(`./${appName}/${file.name}`, updatedData, (e) => {
                     e && console.log(e);
